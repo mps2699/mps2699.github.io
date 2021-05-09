@@ -1,0 +1,37 @@
+---
+title: "Best of Both Worlds: RStudio and Python"
+author: "Manya Shah"
+date: 2021-05-29T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## Python or R?
+
+Both languages have their pros and cons, and are better for serving some purposes than others. Python is more of a general language while R specialises in statistical analysis. Coding in python almost feels like texting, whereas R can have a slighly more complicated syntax. The reticulate library in RStudio can let us combine the two languages and help achieve a seamless coding experience. 
+
+Lets try to run some basic commands in both R and python and see what happens.
+
+```{r}
+library(reticulate)
+use_python("/usr/local/bin/python")
+hi <- "Hello"
+hi
+```
+
+```{python}
+hi="World"
+print(r.hi,hi)
+```
+
+```{r}
+cat(c(hi,py$hi))
+```
+
+We were able to combine both the R and Python output to get our final answer "Hello World"
+
+
