@@ -16,8 +16,9 @@ Both languages have their pros and cons, and are better for serving some purpose
 
 Lets try to run some basic commands in both R and python and see what happens.
 
-```{r cars}
+```{r}
 library(reticulate)
+use_python("/usr/local/bin/python")
 hi <- "Hello"
 hi
 ```
@@ -33,17 +34,4 @@ cat(c(hi,py$hi))
 
 We were able to combine both the R and Python output to get our final answer "Hello World"
 
-## What about transferring Python objects to R? 
-
-Lets create two vectors in Python, and try to plot them using R. 
-
-```{python}
-import pandas
-flights = pandas.read_csv("flights.csv)
-```
-
-```{r}
-library(ggplot2)
-ggplot(py$flights,aes(carrier,arr_delay))+geom_point()+geom_jitter()
-```
 
