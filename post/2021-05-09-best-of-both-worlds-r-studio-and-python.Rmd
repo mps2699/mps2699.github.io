@@ -1,6 +1,0 @@
-+++
-title = "Best of Both Worlds - R Studio and Python"
-description = ""
-tags = []
-categories = []
-+++
