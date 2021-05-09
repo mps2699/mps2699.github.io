@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Manya Shah" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 2 - Manya Shah</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Project 2 - Manya Shah</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<script src="../../rmarkdown-libs/kePrint/kePrint.js"></script>
+<link href="../../rmarkdown-libs/lightable/lightable.css" rel="stylesheet" />
+
+
+<div id="about-the-data" class="section level2">
+<h2>About the Data</h2>
+<p>For my project, I chose the ‘Heart Failure Prediction’ dataset from kaggle.com (<a href="https://www.kaggle.com/andrewmvd/heart-failure-clinical-data" class="uri">https://www.kaggle.com/andrewmvd/heart-failure-clinical-data</a>). The dataset has 153 observations, 6 numeric variables and 5 binary categorical variables. It aims to predict probability of the death of a person from heart failure based on various factors.</p>
+</div>
+<div id="about-the-variables" class="section level2">
+<h2>About the Variables</h2>
+<p>Age: numeric variable indicating age of patient in years
+Anemia: categorical variable indicating if patient has anemia or not (1=Yes, 0=No)
+Creatinine Phosphate: numeric variable indicating level of creatitine phosphate levels in blood
+Diabetes: categorical variable indicating if patient has diabetes or not (1=Yes, 0=No)
+Ejection Fraction: numeric variable indicating percentage of blood leaving the heart at each contraction
+High Blood Pressure: categorical variable indicating if patient has high blood pressure or not (1=Yes,0=No)
+Platelets: numeric variable indicating no of platelets in the blood
+Creatinine Serum: numeric variable indicating level of serum creatinine in the blood
+Sodium Serum: numeric variable indicating level of serum sodium in the blood
+Sex: categorical variable indicating sex of patient (1=Female,0=Male)
+Smoking: categorical variable indicating whether the patient is a smoker or not (1=Yes, 0=No)
+Death: categorical variable indicating if patient died from heart failure or not (1=Yes,0=No). This will be our dependent/response variable.</p>
+<pre class="r"><code>man1 &lt;- manova(cbind(ejection, platelets, phosphokinase, creatine, 
+    sodium) ~ death, data = p2data)
+summary(man1)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## death       1 0.17047   12.042      5    293 1.284e-10 ***
+## Residuals 297                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response ejection :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## death         1   3011  3011.4  23.094 2.453e-06 ***
+## Residuals   297  38728   130.4                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response platelets :
+##              Df     Sum Sq    Mean Sq F value Pr(&gt;F)
+## death         1 6.8831e+09 6883065405  0.7189 0.3972
+## Residuals   297 2.8437e+12 9574701084               
+## 
+##  Response phosphokinase :
+##              Df    Sum Sq Mean Sq F value Pr(&gt;F)
+## death         1   1103933 1103933  1.1733 0.2796
+## Residuals   297 279450722  940912               
+## 
+##  Response creatine :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## death         1  27.618 27.6185  28.159 2.19e-07 ***
+## Residuals   297 291.304  0.9808                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response sodium :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## death         1  221.1 221.084  11.765 0.0006889 ***
+## Residuals   297 5581.0  18.791                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>pairwise.t.test(p2data$phosphokinase, p2data$death, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  p2data$phosphokinase and p2data$death 
+## 
+##   0   
+## 1 0.28
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(p2data$phosphokinase, p2data$death, p.adj = &quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  p2data$phosphokinase and p2data$death 
+## 
+##   0   
+## 1 0.28
+## 
+## P value adjustment method: bonferroni</code></pre>
+<p>I chose to test if there was a significant difference between means of ejection fraction, mean levels of phosphokinase, mean number of platelets, means levels of creatine serum, and mean levels of sodium serum in a group of patients had anaemia and a group that did not. After the conducting the MANOVA, we can see that the anaemic status of patient does have a significant effect on atleast one of the group means (p-value=0.0193) Based on this, I conducted univariate ANOVA tests for each of the numeric variables. Only one ANOVA test came out as significant, the one between the level of creatine phosphokinase and the patient’s anaemic test. I ran a pairwise t-test and got a p=value of 0.00092, confirming a signficant difference between the means of the level of creatine phosphokinase in patients with anaemia and those without. In total, we ran 1 MANOVA, 5 ANOVAs, and 1 t-test. Hence, our corrected significance level is 0.007. Even with this correction, there is a significant difference between the means of the level of creatine phosphokinase in patients with anaemia and those without.</p>
+<p>MANOVA tests have the following assumptions: Independent Observations Multivariate Normality Equal Variance Linear Relationship among DVs No extreme outliers</p>
+<p>It is unlikely that any assumptions other than independent observations and no extreme outliers were fulfilled.</p>
+</div>
+<div id="anova-test" class="section level2">
+<h2>ANOVA TEST</h2>
+<p>Null Hypothesis: The levels of creatine phosphokinase of a dead patient do not differ from the levels of creatine phosphkinase of an alive patient.</p>
+<p>Alternative Hypothesis: The levels of creatine phosphokinase of a dead patient differ from the levels of creatine phosphkinase of an alive patient.</p>
+<pre class="r"><code>anovat &lt;- aov(death ~ phosphokinase, data = p2data)
+summary(aov(death ~ phosphokinase, data = p2data))</code></pre>
+<pre><code>##                Df Sum Sq Mean Sq F value Pr(&gt;F)
+## phosphokinase   1   0.26  0.2565   1.173   0.28
+## Residuals     297  64.92  0.2186</code></pre>
+<pre class="r"><code>F.stat &lt;- (100/12)
+numer.df &lt;- 1
+denom.df &lt;- 297
+
+x1 &lt;- seq(F.stat, 10, len = 100)
+x2 &lt;- seq(qf(0.95, numer.df, denom.df), 10, len = 100)
+y1 &lt;- df(x1, numer.df, denom.df)
+y2 &lt;- df(x2, numer.df, denom.df)
+{
+    curve(df(x, numer.df, denom.df), main = &quot;&quot;, xlim = c(0, 10), 
+        xlab = &quot;F&quot;)
+    polygon(c(x2[1], x2, x2[100]), c(0, y2, 0), col = &quot;black&quot;, 
+        border = NA)
+    polygon(c(x1[1], x1, x1[100]), c(0, y1, 0), col = &quot;grey&quot;, 
+        border = NA)
+    abline(v = F.stat, lty = 2)
+}</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+I conducted an ANOVA to see whether creatine phosphokinase levels can help predict mortality from heart disease. With a p-value of 0.28, we can see that there is no significant difference between the creatine phosphokinase levels in patients that died of heart disease and creatine phosphokinase levels in patients that did not die of heart disease.</p>
+</div>
+<div id="linear-regression-of-creatine-on-sodium-and-diabetes" class="section level2">
+<h2>Linear Regression of Creatine on Sodium and Diabetes</h2>
+<p>Null Hypothesis 1: When controlling for the effect of sodium levels, diabetes does not have a signficiant effect on creatine serum levels of a patient.</p>
+<p>Null Hypothesis 2: When controlling for the effeect of diabetes, sodium levels do not have a significant effect on creatine serum levels of a patient.</p>
+<pre class="r"><code>linearfit &lt;- lm(creatine ~ diabetes * sodium, data = p2data)
+summary(linearfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = creatine ~ diabetes * sodium, data = p2data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.5583 -0.4240 -0.2513  0.1191  7.5979 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      14.13142    2.79401   5.058 7.47e-07 ***
+## diabetes        -11.22108    3.66212  -3.064  0.00239 ** 
+## sodium           -0.09270    0.02039  -4.546 7.99e-06 ***
+## diabetes:sodium   0.08114    0.02679   3.029  0.00267 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.003 on 295 degrees of freedom
+## Multiple R-squared:  0.06883,    Adjusted R-squared:  0.05936 
+## F-statistic: 7.269 on 3 and 295 DF,  p-value: 0.0001016</code></pre>
+<pre class="r"><code>ggplot(p2data, aes(x = creatine, y = sodium, group = diabetes)) + 
+    geom_point(aes(color = diabetes)) + geom_smooth(method = &quot;lm&quot;, 
+    formula = y ~ 1, se = F, fullrange = T, aes(color = diabetes)) + 
+    theme(legend.position = c(0.9, 0.19)) + xlab(&quot;&quot;)+theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Linear Regression: Creatine Serum = 14.13 - 11.22(Diabetes) - 0.093(Sodium Serum) + 0.081(Diabetes*Sodium) Controlling for levels of sodium serum, a diabetic patient will have creatine levels 11.22 units below a patient without diabetes. Controlling for the presence of diabetes, a one unit increase in sodium serum will lead to a 0.093 unit decrease in creatine serum levels.</p>
+<p>Hence, diabetes and sodium serum account for 5.94% of the variation in creatine serum levels.</p>
+</div>
+<div id="does-the-data-meet-linear-regression-assumptions" class="section level2">
+<h2>Does The Data Meet Linear Regression Assumptions?</h2>
+</div>
+<div id="linearity" class="section level2">
+<h2>Linearity</h2>
+<pre class="r"><code>p2data %&gt;% ggplot(aes(x = creatine, y = sodium)) + geom_point() + 
+    theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="normality" class="section level2">
+<h2>Normality</h2>
+<pre class="r"><code>resids &lt;- lm(creatine ~ sodium, data = p2data)$residuals
+ggplot() + geom_histogram(aes(resids), bins = 10) + theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>shapiro.test(resids)</code></pre>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  resids
+## W = 0.55779, p-value &lt; 2.2e-16</code></pre>
+<p>##Homoskedasticity</p>
+<pre class="r"><code>fitted &lt;- lm(creatine ~ sodium, data = p2data)$fitted.values
+ggplot() + geom_point(aes(fitted, resids)) + theme_classic()</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>As we can see, none of the assumptions beside random sampling have been fulfilled by our regression data.</p>
+</div>
+<div id="robust-standard-errors" class="section level2">
+<h2>Robust Standard Errors</h2>
+<pre class="r"><code>summary(linearfit)$coef</code></pre>
+<pre><code>##                     Estimate Std. Error   t value     Pr(&gt;|t|)
+## (Intercept)      14.13141993 2.79400918  5.057757 7.466760e-07
+## diabetes        -11.22107606 3.66211703 -3.064095 2.385028e-03
+## sodium           -0.09270182 0.02039266 -4.545843 7.993604e-06
+## diabetes:sodium   0.08114407 0.02679052  3.028835 2.672126e-03</code></pre>
+<pre class="r"><code>coeftest(linearfit, vcov = vcovHC(linearfit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                   Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept)      14.131420   3.183558  4.4389 1.279e-05 ***
+## diabetes        -11.221076   4.377850 -2.5631   0.01087 *  
+## sodium           -0.092702   0.022863 -4.0546 6.431e-05 ***
+## diabetes:sodium   0.081144   0.031895  2.5441   0.01146 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>The robust standard errors correct for the absense of heteroskedasticity. However, all the variables remain significant, similar to the results of our original regression test.</p>
+</div>
+<div id="bootstrapping" class="section level2">
+<h2>Bootstrapping</h2>
+<pre class="r"><code>boot_dat &lt;- sample_frac(p2data, replace = T)
+samp_distn &lt;- replicate(5000, {
+    boot_dat &lt;- sample_frac(p2data, replace = T)
+    bootstrapfit &lt;- lm(creatine ~ sodium * diabetes, data = boot_dat)
+    coef(bootstrapfit)
+})
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)     sodium diabetes sodium:diabetes
+## 1    3.127608 0.02245989 4.316275      0.03143794</code></pre>
+<p>The bootstrapped standards errors are very similar to both our corrected and uncorrected standard errors.</p>
+</div>
+<div id="logistic-regression-of-death-on-creatine-serum-and-sodium-serum" class="section level2">
+<h2>Logistic Regression of Death on Creatine Serum and Sodium Serum</h2>
+<pre class="r"><code>logisticfit &lt;- glm(death ~ creatine + sodium, data = p2data, 
+    family = binomial)
+summary(logisticfit)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = death ~ creatine + sodium, family = binomial, data = p2data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.4664  -0.8104  -0.6997   1.1549   1.8981  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  7.57448    4.29773   1.762 0.077996 .  
+## creatine     0.71696    0.19316   3.712 0.000206 ***
+## sodium      -0.06836    0.03109  -2.199 0.027881 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 375.35  on 298  degrees of freedom
+## Residual deviance: 342.20  on 296  degrees of freedom
+## AIC: 348.2
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>exp(coef(logisticfit))</code></pre>
+<pre><code>##  (Intercept)     creatine       sodium 
+## 1947.8422982    2.0482044    0.9339232</code></pre>
+<pre class="r"><code>p2data$probs &lt;- predict(logisticfit, type = &quot;response&quot;)
+confmat &lt;- (table(predict = as.numeric(p2data$probs &gt; 0.5), truth = p2data$death) %&gt;% 
+    addmargins)
+confmat %&gt;% kbl(caption = &quot;Confusion Matrix&quot;) %&gt;% kable_classic(full_width = T, 
+    html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-9">Table 1: </span>Confusion Matrix
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+0
+</th>
+<th style="text-align:right;">
+1
+</th>
+<th style="text-align:right;">
+Sum
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+191
+</td>
+<td style="text-align:right;">
+73
+</td>
+<td style="text-align:right;">
+264
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sum
+</td>
+<td style="text-align:right;">
+203
+</td>
+<td style="text-align:right;">
+96
+</td>
+<td style="text-align:right;">
+299
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>stats &lt;- class_diag(p2data$probs, p2data$death) %&gt;% kbl() %&gt;% 
+    kable_classic()
+stats</code></pre>
+<table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<thead>
+<tr>
+<th style="text-align:right;">
+acc
+</th>
+<th style="text-align:right;">
+sens
+</th>
+<th style="text-align:right;">
+spec
+</th>
+<th style="text-align:right;">
+ppv
+</th>
+<th style="text-align:right;">
+auc
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0.7157191
+</td>
+<td style="text-align:right;">
+0.2395833
+</td>
+<td style="text-align:right;">
+0.9408867
+</td>
+<td style="text-align:right;">
+0.6571429
+</td>
+<td style="text-align:right;">
+0.7203664
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>ROCplot &lt;- ggplot(p2data) + geom_roc(aes(d = death, m = probs), 
+    n.cuts = 0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.7203664</code></pre>
+<pre class="r"><code>p2data &lt;- p2data %&gt;% mutate(outcome = ifelse(death == &quot;1&quot;, &quot;Dead&quot;, 
+    &quot;Alive&quot;))</code></pre>
+<p>The odds of death from heart disease increase by 2.05 times for every one unit increase in creatine serum. The odds of death from heart disease increase by 0.93 times for every one unit increase in sodium serum. The effects of both creatine serum (p-value=0.0002) and sodium serum (p-value=0.028) are significant in predicting the odds of a patient dying from heart disease.</p>
+<p>The specificity of the model (proportion of number of alive patients classified correctly by the model) is 0.941 The sensitivity of the model (proportion of number of dead patients classified correct by the model) is 0.239 The precision of the model (number of dead patients classified by the model compared to the actual number of dead patients) is 0.716 The AUC is 0.72 which is about average and indicates how likely the model is to able to differentiate between the two outcomes.</p>
+<p>Hence, the model is good at predicting positive outcomes but not at predicting negative outcomes.</p>
+</div>
+<div id="density-plot-of-logistic-regression" class="section level2">
+<h2>Density Plot of Logistic Regression</h2>
+<pre class="r"><code>p2data$logit &lt;- predict(logisticfit, type = &quot;link&quot;)
+p2data %&gt;% ggplot() + geom_density(aes(logit, color = outcome, 
+    fill = outcome), alpha = 0.4) + theme(legend.position = c(0.85, 
+    0.85)) + geom_vline(xintercept = 0) + xlab(&quot;logit (log-odds)&quot;) + 
+    geom_rug(aes(logit, color = outcome))</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="logistic-regression-2" class="section level2">
+<h2>Logistic Regression 2</h2>
+<pre class="r"><code>p2data2 &lt;- p2data %&gt;% select(-&quot;probs&quot;, -&quot;logit&quot;, -&quot;outcome&quot;)
+logisticfit2 &lt;- glm(death ~ ., data = p2data2, family = &quot;binomial&quot;)
+summary(logisticfit2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = death ~ ., family = &quot;binomial&quot;, data = p2data2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.1848  -0.5706  -0.2401   0.4466   2.6668  
+## 
+## Coefficients:
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    1.018e+01  5.657e+00   1.801 0.071774 .  
+## age            4.742e-02  1.580e-02   3.001 0.002690 ** 
+## anaemia       -7.470e-03  3.605e-01  -0.021 0.983467    
+## phosphokinase  2.222e-04  1.779e-04   1.249 0.211684    
+## diabetes       1.451e-01  3.512e-01   0.413 0.679380    
+## ejection      -7.666e-02  1.633e-02  -4.695 2.67e-06 ***
+## bp            -1.027e-01  3.587e-01  -0.286 0.774688    
+## platelets     -1.200e-06  1.889e-06  -0.635 0.525404    
+## creatine       6.661e-01  1.815e-01   3.670 0.000242 ***
+## sodium        -6.698e-02  3.974e-02  -1.686 0.091855 .  
+## sex           -5.337e-01  4.139e-01  -1.289 0.197299    
+## smoking       -1.349e-02  4.126e-01  -0.033 0.973915    
+## time          -2.104e-02  3.014e-03  -6.981 2.92e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 375.35  on 298  degrees of freedom
+## Residual deviance: 219.55  on 286  degrees of freedom
+## AIC: 245.55
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre class="r"><code>logprobs2 &lt;- predict(logisticfit2, type = &quot;link&quot;)
+class_diag(logprobs2, p2data2$death)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.8294314 0.6041667 0.9359606 0.8169014 0.8972188</code></pre>
+<pre class="r"><code>exp(coef(logisticfit2))</code></pre>
+<pre><code>##   (Intercept)           age       anaemia phosphokinase      diabetes 
+##  2.650077e+04  1.048561e+00  9.925574e-01  1.000222e+00  1.156213e+00 
+##      ejection            bp     platelets      creatine        sodium 
+##  9.262024e-01  9.024162e-01  9.999988e-01  1.946618e+00  9.352129e-01 
+##           sex       smoking          time 
+##  5.864558e-01  9.865984e-01  9.791753e-01</code></pre>
+<p>When testing for the effects of all the variables on probability of the death of the patient from heart disease, age, phosphokinase levels, ejection levels, and creatine serum levels have a significant effect. The odds of a patient dying from heart disease increase by 1.05 times with a one unit increase in age. The odds of a patient dying from heart disease increase by 1.00 times with a one unit increase in phosphokinase levels. The odds of a patient dying from heart disease increase by 0.93 times with a one unit increase in ejection levels. The odds of a patient dying from heart disease increase by 1.93 times with a one unit icnrease in creatine serum levels.</p>
+<p>The sensitivity of the model has increased from 0.239 in our previous model to 0.344. The specificity has increased slightly from 0.934 to 0.956. The precision also increased to 0.756. AUC increased to 0.809.</p>
+</div>
+<div id="fold-cv" class="section level2">
+<h2>10-Fold CV</h2>
+<pre class="r"><code>k = 10
+data1 &lt;- p2data2[sample(nrow(p2data2)), ]
+folds &lt;- cut(seq(1:nrow(p2data2)), breaks = k, labels = F)
+
+diags &lt;- NULL
+for (i in 1:k) {
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    truth &lt;- test$death
+    fit &lt;- glm(death ~ ., data = train, family = &quot;binomial&quot;)
+    probs &lt;- predict(fit, newdata = test, type = &quot;response&quot;)
+    
+    diags &lt;- rbind(diags, class_diag(probs, truth))
+}
+summarize_all(diags, mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.8229885 0.6790276 0.8946518 0.7477525 0.8621304</code></pre>
+<p>The sensitivity of our model goes up significantly whereas specificity decreases. This is to be expected since both values have a trade off. AUC does not increase greatly, nor does accuracy. Precision actually goes down.</p>
+</div>
+<div id="lasso" class="section level2">
+<h2>LASSO</h2>
+<pre class="r"><code>y &lt;- as.matrix(p2data2$death)
+x &lt;- model.matrix(logisticfit2)
+head(x)</code></pre>
+<pre><code>##   (Intercept) age anaemia phosphokinase diabetes ejection bp platelets creatine
+## 1           1  75       0           582        0       20  1    265000      1.9
+## 2           1  55       0          7861        0       38  0    263358      1.1
+## 3           1  65       0           146        0       20  0    162000      1.3
+## 4           1  50       1           111        0       20  0    210000      1.9
+## 5           1  65       1           160        1       20  0    327000      2.7
+## 6           1  90       1            47        0       40  1    204000      2.1
+##   sodium sex smoking time
+## 1    130   1       0    4
+## 2    136   1       0    6
+## 3    129   1       1    7
+## 4    137   1       0    7
+## 5    116   0       0    8
+## 6    132   1       1    8</code></pre>
+<pre class="r"><code>cv &lt;- cv.glmnet(x, y, family = &quot;binomial&quot;)
+lasso &lt;- glmnet(x, y, family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 14 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         s0
+## (Intercept)    0.838487738
+## (Intercept)    .          
+## age            0.009071624
+## anaemia        .          
+## phosphokinase  .          
+## diabetes       .          
+## ejection      -0.028026066
+## bp             .          
+## platelets      .          
+## creatine       0.264411121
+## sodium         .          
+## sex            .          
+## smoking        .          
+## time          -0.012568974</code></pre>
+<p>When performing LASSO, only three predictor variables are retained - age, ejectin levels, and creatine serum levels.</p>
+</div>
+<div id="fold-cv-1" class="section level2">
+<h2>10-Fold CV</h2>
+<pre class="r"><code>k = 10
+data1 &lt;- p2data2[sample(nrow(p2data2)), ]
+folds &lt;- cut(seq(1:nrow(p2data2)), breaks = k, labels = F)
+
+diags &lt;- NULL
+for (i in 1:k) {
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    truth &lt;- test$death
+    fit2 &lt;- glm(death ~ age + ejection + creatine, data = train, 
+        family = &quot;binomial&quot;)
+    probs4 &lt;- predict(fit2, newdata = test, type = &quot;response&quot;)
+    
+    diags &lt;- rbind(diags, class_diag(probs4, truth))
+}
+summarize_all(diags, mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.7557471 0.4637002 0.8943655 0.6612302 0.7765456</code></pre>
+<p>After performing a regression only with the variables retained by LASSO, the AUC increases from 0.77 to 0.78, not really impactful.</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

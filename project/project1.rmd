@@ -1,0 +1,161 @@
+---
+title: "Project 1"
+author: "Manya Shah"
+date: "4/4/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", 
+    warning = F, message = F, tidy = TRUE, tidy.opts = list(width.cutoff = 60), 
+    R.options = list(max.print = 100))
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
+```
+
+## About the Datasets
+
+For this project, I combined two different datasets. Dataset 1 consists of 2 categorical variables - Country and Development Status and 3 numerical variables - Literacy, Employment, and GDP (in millions of dollars). This dataset was obtained from the World Bank. Dataset 2 consists of 1 categorical variable - Country, and 2 numerical variables - Net FDI Inflows (in millions of dollars) and population of the country (in millions).It was obtained from the International Labor Organization. Both datasets have 50 observations.I chose these datasets because I found a lack of research on foreign direct investments in the global market and the indicators that affect FDI. 
+I expect there to be a positive and direct relationship between FDI and GDP as well as GDP and employment of the country. 
+
+## About the Variables
+
+GDP is the gross domestic product of each country and will be measured in millions of dollars. 
+The development status is decided by various indicators chosen by the UN and World Bank and will act as a categorical variable with two distinct values - developed and developing
+Net FDI Inflow is the different between the money that is leaving the country and money that is entering the country. This variable will also be measured in millions of dollars.
+Employment is the percentage of employed people against the total population eligible to work. 
+Education is the literacy rate of each country. 
+The country name will be our joint variable between the datasets.
+
+## Joining Datasets
+
+```{R}
+library(tidyverse)
+D1 <- read_csv("SDS328 Project 1 Data 1.csv")
+D2 <- read_csv("SDS Project 1 Data 3.csv")
+Dataset <- left_join(D1,D2)
+head(Dataset)
+```
+
+I used the left_join function because I did not have any preference on the order of my variables. Also, Dataset 1 had the majority of my variables and I wanted Dataset 2 to align according to it. No rows were removed nor were any NA values added. 
+
+## Tidying Data
+
+Since my data was already tidy, I decided to rearrange it and then tidy it back. 
+
+```{r}
+dataset.long <- Dataset%>%pivot_longer(c(2:4),names_to="Variable",values_to="Values")
+dataset.long
+dataset.long%>%pivot_wider(names_from="Variable",values_from="Values")
+```
+
+## Exploring the Data
+
+```{R}
+library(kableExtra)
+Dataset%>%filter(GDP==max(GDP))%>%kbl(caption="Table 1: Statistics for Highest GDP")%>%kable_classic(full_width = T, html_font = "Cambria")
+Dataset%>%filter(GDP==min(GDP))%>%kbl(caption="Table 2: Statistics for Lowest GDP")%>%kable_classic(full_width = T, html_font = "Cambria")
+Dataset <- Dataset%>%mutate("GDP_per_capita"=GDP/Population)
+Dataset%>%filter(GDP_per_capita==max(GDP_per_capita))%>%kbl(caption="Table 3: Statistics for Highest GDP per Capita")%>%kable_classic(full_width = T, html_font = "Cambria")
+Dataset%>%filter(GDP_per_capita==min(GDP_per_capita))%>%kbl(caption="Table 4: Statistics for Lowest GDP per Capita")%>%kable_classic(full_width = T, html_font = "Cambria")
+Dataset <- Dataset%>%arrange(desc(GDP_per_capita))
+Dataset%>%filter(GDP>mean(GDP))%>%select(Country,GDP,Employment)%>%arrange(Employment)%>%kbl(caption="Table 5: Employment for 10 Countries with Highest GDP")%>%kable_classic(full_width = T, html_font = "Cambria")%>%row_spec(4,bold=T,color="black",background="green")%>%row_spec(11,bold=T,color="black",background="grey")
+```
+
+Summarizing the tables: 
+
+Using the filter function, we can see that the United States and Haiti have the highest and lowest standards of living according to GDP. However, population can play a major role in this, meaning GDP is not always the accurate indicator of standard of living. For example, population of 10 people that earn 10,000 dollars will have the same GDP as a population of 10,000 people making 10 dollars. 
+Therefore, we will create a new variable 'GDP per capita' by dividing the GDP by the population. Now we can see that it is actually Switzerland and Chad who have the highest and lowest standards of living respectively. 
+In the last table, we analyse if employment is the only variable that controls GDP. If this was true, we would expect the country with the highest employment to have the highest GDP. However, this is not the case. We can see that while USA has the highest GDP, China has the highest employment. Hence, there must be other factors controlling the GDP variable. We will explore this more through a graphical representation later on. 
+
+```{r}
+library(kableExtra)
+s1 <- Dataset%>%summarize_if(is.numeric, mean)%>%t()
+s2 <- Dataset%>%summarize_if(is.numeric, sd)%>%t()
+s3 <- Dataset%>%summarize_if(is.numeric, min)%>%t()
+s4<- Dataset%>%summarize_if(is.numeric, max)%>%t()
+s5 <- Dataset%>%summarize_if(is.numeric, IQR)%>%t()
+s1 <- s1%>%as.data.frame%>%rownames_to_column("Variables")%>%rename("mean"=V1)
+s2 <- s2%>%as.data.frame%>%rownames_to_column("Var")%>%rename("sd"=V1)
+s3 <- s3%>%as.data.frame%>%rownames_to_column("Var")%>%rename("min"=V1)
+s4 <- s4%>%as.data.frame%>%rownames_to_column("Var")%>%rename("max"=V1)
+s5 <- s5%>%as.data.frame%>%rownames_to_column("Var")%>%rename("IQR"=V1)
+Summary <- cbind(s1,s2,s3,s4,s5)
+Summary <- Summary%>%as.data.frame%>%select(-Var)
+Summary%>%kbl(caption="Table 6: Summary Statistics of Numeric Variables")%>%kable_classic(full_width = F, html_font = "Cambria")
+Dataset%>%group_by(Status)%>%summarize_if(is.numeric,mean)%>%rename("Mean By Status"="Status")%>%kbl(caption="Table 7: Mean of Numeric Variables by Development Status")%>%kable_classic(full_width = F, html_font = "Cambria")
+Dataset%>%group_by(Status)%>%summarize_if(is.numeric,min)%>%rename("Minimum Value by Status"="Status")%>%kbl(caption="Table 8: Minimum Values of Numeric Variables by Development Status")%>%kable_classic(full_width = F, html_font = "Cambria")
+Dataset%>%group_by(Status)%>%summarize_if(is.numeric,max)%>%rename("Maximum Value by Status"="Status")%>%kbl(caption="Table 9: Maximum Value of Numeric Variables by Development")%>%kable_classic(full_width = F, html_font = "Cambria")
+```
+Summarizing the tables:
+
+Table 6 summarizes the statistics of all numeric variables regardless of their categorical classification. We can see the spread, max and min values, and quantile ranges throughout the dataset. To analyze the effect of the development status of the country on these summary statistics, we grouped them accordingly in Table 7,8, and 9.
+By comparing the minimum values of the developed group and the maximum values of the developing group, we can try to see if there is some set limit that seperates the two groups. 
+The max GDP per capita of the highest developing country is 2.71 times higher than the min GDP per capita in the developed group. Similarly, max employment in the developing group is 87, while the min employment is only 50 in the developed group. Therefore, we can conclude that a single variable does not control the status of a country, instead it is more likely a mix of all. 
+
+
+## Visualizations
+
+Using the correlation matrix, we can determine how each numeric variable relates to one other. These correlations have been displayed in both a tabular and graphic form below. 
+
+```{r,echo=FALSE}
+cormat <- Dataset %>% select_if(is.numeric) %>% cor(use="pair")
+cormat
+tidycor <- cormat %>% as.data.frame %>% rownames_to_column("var1") %>%  pivot_longer(-1,names_to="var2",values_to="correlation")
+tidycor
+tidycor%>%ggplot(aes(var1,var2,fill=correlation))+geom_tile()+scale_fill_gradient2(low="white",mid="indian red",high="light pink 4")+geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+coord_fixed()
+```
+
+
+Plot 1: According to the heatmap above, we see the highest correlation between GDP and FDI at 0.92 as well as GDP per capita and Education at 0.72. Another important correlation to note is that between population and GDP, and population and GDP per capita. As we noted in our summary statistics as well, a high GDP does not necessarily mean a high GDP per capita and the popoulation acts as the deciding factor. Hence, it is not surprisngly that while population and GDP have a positive correlation, population and GDP per capita have a negative correlation. 
+
+
+
+```{r,echo=FALSE}
+library(ggExtra)
+Plot_2 <- ggplot(Dataset,aes(x=GDP,y=FDI,color=Status))+geom_point(size=4)+geom_smooth(se=F)+scale_x_log10() + scale_y_log10()+scale_color_manual(values=c("indian red","light pink 4"))+geom_label(x=7.05,y=5.54,label="United States",size=2,color="black")+ggtitle("Plot 1: Relationship between the GDP and Net FDI Inflows of a Country")+theme_minimal()+theme(legend.position = "bottom")+theme(plot.title = element_text(hjust = 0.5,size=19))+theme(axis.title=element_text(size=19))
+ggMarginal(Plot_2,type='histogram',fill="dark blue")
+```
+
+
+
+
+Plot 2: In the above plot, we have total GDP of the country on the x-axis and the net FDI on the y-axis. The histograms in dark blue display the distribution of each variable. I wanted to test if the gross domestic product of a country and if that has an effect on how foreign investors value it. I also wanted to see if the development status can increase or decrease its appeal for foreign investments. As predicted in the introduction, there is a direct and positive relationship between FDI and GDP. The data was transformed to log form to accommodate for the large numbers.Surprisingly, development status did not have a significant effect on how investors viewed the potential of each country. There is an even increase in FDI with increase in GDP for all countries, regardless of development status. The country with the highest GDP and FDI has been labelled. 
+In order to further ensure the data was normally distributed, a histogram has been imposed on the scatterplot. Both variables seem to be mostly evenly distributed. 
+
+
+
+```{r,echo=FALSE}
+
+ggplot(Dataset,aes(x=Employment,y=reorder(Country,-Employment),fill=Status))+geom_bar(stat="summary",width=0.4, position = position_dodge(width=0.5))+theme(axis.text.y = element_text(angle=45, hjust=1))+scale_fill_manual(values=c("dark blue","light pink 4"))+theme_light()+xlab("Employment")+ylab("Country")+ggtitle("Plot 2: Employment in Countries by Development Status")+theme(plot.title = element_text(hjust = 0.5,size=19))+theme(axis.title=element_text(size=19))
+```
+
+
+Plot 3: In the above plot, we have the sample countries on the y-axis and the rate of employment on the x-axis. The bars have been distinguished based on whether the county is developed or developing. I wanted to test if an increase in employment opportunities can further the development status. Based on the hypothesis that it does, all countries towards the end of the graph with the highest employment rates, should have been filled in with dark green to indicate fully developed status. Surprisingly, this was not the case. Developed countries were spread pretty evenly throughout the graph and developed countries took up both sides of the extremes. This observation should prompt further research into how the types of employment offered in each country and other factors affect it. As we studied in the summary statistics above, neither the United States (highest GDP) nor Switzerland(highest GDP per capita) have the highest employment rates. 
+
+## K-Means Clustering
+
+```{r}
+library(cluster)
+library(GGally)
+kmeans5 <- Dataset%>%select_if(is.numeric)
+sil_width<-vector() 
+for(i in 2:10){    
+  kms <- kmeans(kmeans5,centers=i) 
+  sil <- silhouette(kms$cluster,dist(kmeans5)) 
+  sil_width[i]<-mean(sil[,3])
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_y_continuous(name="k",breaks=1:10)
+pam1 <- kmeans5%>%pam(2)
+pam1
+pam1$silinfo$avg.width
+plot(pam1,which=2)
+kmeans5%>%mutate(cluster=as.factor(pam1$clustering))%>%ggpairs(columns=c("GDP","FDI","Employment","Education","GDP_per_capita"),upper=NULL,aes(color=cluster))
+```
+Based on our plot for kmeans from 1 to 10, we can see that the average silhouette width is highest at 2 clusters. Using this number for PAM, we get an average width of 0.92 implying a strong structure. The silhouette plot further confirms this. 
+

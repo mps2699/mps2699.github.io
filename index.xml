@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Manya Shah</title>
+    <link>/</link>
+    <description>Recent content on Manya Shah</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/post/2015/07/23/hello-r-markdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2015/07/23/hello-r-markdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+    </item>
+    
+    <item>
+      <title>Project 1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>About the Datasets For this project, I combined two different datasets. Dataset 1 consists of 2 categorical variables - Country and Development Status and 3 numerical variables - Literacy, Employment, and GDP (in millions of dollars). This dataset was obtained from the World Bank. Dataset 2 consists of 1 categorical variable - Country, and 2 numerical variables - Net FDI Inflows (in millions of dollars) and population of the country (in millions).</description>
+    </item>
+    
+    <item>
+      <title>Project 2 - Manya Shah</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>About the Data For my project, I chose the ‘Heart Failure Prediction’ dataset from kaggle.com (https://www.kaggle.com/andrewmvd/heart-failure-clinical-data). The dataset has 153 observations, 6 numeric variables and 5 binary categorical variables. It aims to predict probability of the death of a person from heart failure based on various factors.
+ About the Variables Age: numeric variable indicating age of patient in years Anemia: categorical variable indicating if patient has anemia or not (1=Yes, 0=No) Creatinine Phosphate: numeric variable indicating level of creatitine phosphate levels in blood Diabetes: categorical variable indicating if patient has diabetes or not (1=Yes, 0=No) Ejection Fraction: numeric variable indicating percentage of blood leaving the heart at each contraction High Blood Pressure: categorical variable indicating if patient has high blood pressure or not (1=Yes,0=No) Platelets: numeric variable indicating no of platelets in the blood Creatinine Serum: numeric variable indicating level of serum creatinine in the blood Sodium Serum: numeric variable indicating level of serum sodium in the blood Sex: categorical variable indicating sex of patient (1=Female,0=Male) Smoking: categorical variable indicating whether the patient is a smoker or not (1=Yes, 0=No) Death: categorical variable indicating if patient died from heart failure or not (1=Yes,0=No).</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

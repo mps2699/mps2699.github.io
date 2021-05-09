@@ -1,0 +1,296 @@
+---
+title: "Project 2 - Manya Shah"
+author: "Manya Shah"
+date: "5/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(lmtest)
+library(sandwich)
+library(tidyverse)
+library(ggplot2)
+library(plotROC)
+library(glmnet)
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+library(lmtest)
+library(sandwich)
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+p2data <- read.csv("Project 2 Data.csv")
+p2data <- p2data%>%rename("death"=DEATH_EVENT)
+p2data <- p2data%>%rename("phosphokinase"=creatinine_phosphokinase)
+p2data <- p2data%>%rename("sodium"=serum_sodium)
+p2data <- p2data%>%rename("creatine"=serum_creatinine)
+p2data <- p2data%>%rename("bp"=high_blood_pressure)
+p2data <- p2data%>%rename("ejection"=ejection_fraction)
+
+```
+
+## About the Data
+
+For my project, I chose the ‘Heart Failure Prediction’ dataset from kaggle.com (https://www.kaggle.com/andrewmvd/heart-failure-clinical-data). The dataset has 153 observations, 6 numeric variables and 5 binary categorical variables. It aims to predict probability of the death of a person from heart failure based on various factors.
+
+## About the Variables
+
+Age: numeric variable indicating age of patient in years 
+Anemia: categorical variable indicating if patient has anemia or not (1=Yes, 0=No) 
+Creatinine Phosphate: numeric variable indicating level of creatitine phosphate levels in blood 
+Diabetes: categorical variable indicating if patient has diabetes or not (1=Yes, 0=No) 
+Ejection Fraction: numeric variable indicating percentage of blood leaving the heart at each contraction 
+High Blood Pressure: categorical variable indicating if patient has high blood pressure or not (1=Yes,0=No) 
+Platelets: numeric variable indicating no of platelets in the blood 
+Creatinine Serum: numeric variable indicating level of serum creatinine in the blood 
+Sodium Serum: numeric variable indicating level of serum sodium in the blood 
+Sex: categorical variable indicating sex of patient (1=Female,0=Male) 
+Smoking: categorical variable indicating whether the patient is a smoker or not (1=Yes, 0=No) 
+Death: categorical variable indicating if patient died from heart failure or not (1=Yes,0=No). This will be our dependent/response variable.
+
+```{r}
+man1 <- manova(cbind(ejection, platelets, phosphokinase, creatine, 
+    sodium) ~ death, data = p2data)
+summary(man1)
+summary.aov(man1)
+pairwise.t.test(p2data$phosphokinase, p2data$death, p.adj = "none")
+pairwise.t.test(p2data$phosphokinase, p2data$death, p.adj = "bonferroni")
+
+```
+
+I chose to test if there was a significant difference between means of ejection fraction, mean levels of phosphokinase, mean number of platelets, means levels of creatine serum, and mean levels of sodium serum in a group of patients had anaemia and a group that did not. After the conducting the MANOVA, we can see that the anaemic status of patient does have a significant effect on atleast one of the group means (p-value=0.0193) Based on this, I conducted univariate ANOVA tests for each of the numeric variables. Only one ANOVA test came out as significant, the one between the level of creatine phosphokinase and the patient’s anaemic test. I ran a pairwise t-test and got a p=value of 0.00092, confirming a signficant difference between the means of the level of creatine phosphokinase in patients with anaemia and those without. In total, we ran 1 MANOVA, 5 ANOVAs, and 1 t-test. Hence, our corrected significance level is 0.007. Even with this correction, there is a significant difference between the means of the level of creatine phosphokinase in patients with anaemia and those without.
+
+MANOVA tests have the following assumptions: Independent Observations Multivariate Normality Equal Variance Linear Relationship among DVs No extreme outliers
+
+It is unlikely that any assumptions other than independent observations and no extreme outliers were fulfilled.
+
+## ANOVA TEST
+
+Null Hypothesis: The levels of creatine phosphokinase of a dead patient do not differ from the levels of creatine phosphkinase of an alive patient.
+
+Alternative Hypothesis: The levels of creatine phosphokinase of a dead patient differ from the levels of creatine phosphkinase of an alive patient.
+
+```{r}
+anovat <- aov(death ~ phosphokinase, data = p2data)
+summary(aov(death ~ phosphokinase, data = p2data))
+F.stat <- (100/12)
+numer.df <- 1
+denom.df <- 297
+
+x1 <- seq(F.stat, 10, len = 100)
+x2 <- seq(qf(0.95, numer.df, denom.df), 10, len = 100)
+y1 <- df(x1, numer.df, denom.df)
+y2 <- df(x2, numer.df, denom.df)
+{
+    curve(df(x, numer.df, denom.df), main = "", xlim = c(0, 10), 
+        xlab = "F")
+    polygon(c(x2[1], x2, x2[100]), c(0, y2, 0), col = "black", 
+        border = NA)
+    polygon(c(x1[1], x1, x1[100]), c(0, y1, 0), col = "grey", 
+        border = NA)
+    abline(v = F.stat, lty = 2)
+}
+```
+I conducted an ANOVA to see whether creatine phosphokinase levels can help predict mortality from heart disease. With a p-value of 0.28, we can see that there is no significant difference between the creatine phosphokinase levels in patients that died of heart disease and creatine phosphokinase levels in patients that did not die of heart disease.
+
+## Linear Regression of Creatine on Sodium and Diabetes
+
+Null Hypothesis 1: When controlling for the effect of sodium levels, diabetes does not have a signficiant effect on creatine serum levels of a patient.
+
+Null Hypothesis 2: When controlling for the effeect of diabetes, sodium levels do not have a significant effect on creatine serum levels of a patient.
+
+```{r}
+linearfit <- lm(creatine ~ diabetes * sodium, data = p2data)
+summary(linearfit)
+ggplot(p2data, aes(x = creatine, y = sodium, group = diabetes)) + 
+    geom_point(aes(color = diabetes)) + geom_smooth(method = "lm", 
+    formula = y ~ 1, se = F, fullrange = T, aes(color = diabetes)) + 
+    theme(legend.position = c(0.9, 0.19)) + xlab("")+theme_classic()
+```
+
+Linear Regression: Creatine Serum = 14.13 - 11.22(Diabetes) - 0.093(Sodium Serum) + 0.081(Diabetes*Sodium) Controlling for levels of sodium serum, a diabetic patient will have creatine levels 11.22 units below a patient without diabetes. Controlling for the presence of diabetes, a one unit increase in sodium serum will lead to a 0.093 unit decrease in creatine serum levels.
+
+Hence, diabetes and sodium serum account for 5.94% of the variation in creatine serum levels.
+
+## Does The Data Meet Linear Regression Assumptions?
+
+## Linearity
+
+```{r}
+p2data %>% ggplot(aes(x = creatine, y = sodium)) + geom_point() + 
+    theme_classic()
+```
+
+## Normality
+
+```{r}
+resids <- lm(creatine ~ sodium, data = p2data)$residuals
+ggplot() + geom_histogram(aes(resids), bins = 10) + theme_classic()
+shapiro.test(resids)
+```
+
+##Homoskedasticity
+
+```{r}
+fitted <- lm(creatine ~ sodium, data = p2data)$fitted.values
+ggplot() + geom_point(aes(fitted, resids)) + theme_classic()
+```
+
+As we can see, none of the assumptions beside random sampling have been fulfilled by our regression data.
+
+## Robust Standard Errors
+
+```{r}
+summary(linearfit)$coef
+coeftest(linearfit, vcov = vcovHC(linearfit))
+```
+
+The robust standard errors correct for the absense of heteroskedasticity. However, all the variables remain significant, similar to the results of our original regression test.
+
+## Bootstrapping
+
+```{r}
+boot_dat <- sample_frac(p2data, replace = T)
+samp_distn <- replicate(5000, {
+    boot_dat <- sample_frac(p2data, replace = T)
+    bootstrapfit <- lm(creatine ~ sodium * diabetes, data = boot_dat)
+    coef(bootstrapfit)
+})
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+```
+
+The bootstrapped standards errors are very similar to both our corrected and uncorrected standard errors.
+
+## Logistic Regression of Death on Creatine Serum and Sodium Serum
+
+```{r}
+logisticfit <- glm(death ~ creatine + sodium, data = p2data, 
+    family = binomial)
+summary(logisticfit)
+exp(coef(logisticfit))
+p2data$probs <- predict(logisticfit, type = "response")
+confmat <- (table(predict = as.numeric(p2data$probs > 0.5), truth = p2data$death) %>% 
+    addmargins)
+confmat %>% kbl(caption = "Confusion Matrix") %>% kable_classic(full_width = T, 
+    html_font = "Cambria")
+stats <- class_diag(p2data$probs, p2data$death) %>% kbl() %>% 
+    kable_classic()
+stats
+ROCplot <- ggplot(p2data) + geom_roc(aes(d = death, m = probs), 
+    n.cuts = 0)
+ROCplot
+calc_auc(ROCplot)
+p2data <- p2data %>% mutate(outcome = ifelse(death == "1", "Dead", 
+    "Alive"))
+```
+
+The odds of death from heart disease increase by 2.05 times for every one unit increase in creatine serum. The odds of death from heart disease increase by 0.93 times for every one unit increase in sodium serum. The effects of both creatine serum (p-value=0.0002) and sodium serum (p-value=0.028) are significant in predicting the odds of a patient dying from heart disease.
+
+The specificity of the model (proportion of number of alive patients classified correctly by the model) is 0.941 The sensitivity of the model (proportion of number of dead patients classified correct by the model) is 0.239 The precision of the model (number of dead patients classified by the model compared to the actual number of dead patients) is 0.716 The AUC is 0.72 which is about average and indicates how likely the model is to able to differentiate between the two outcomes.
+
+Hence, the model is good at predicting positive outcomes but not at predicting negative outcomes.
+
+## Density Plot of Logistic Regression
+
+
+```{r}
+p2data$logit <- predict(logisticfit, type = "link")
+p2data %>% ggplot() + geom_density(aes(logit, color = outcome, 
+    fill = outcome), alpha = 0.4) + theme(legend.position = c(0.85, 
+    0.85)) + geom_vline(xintercept = 0) + xlab("logit (log-odds)") + 
+    geom_rug(aes(logit, color = outcome))
+
+```
+
+## Logistic Regression 2
+```{r}
+p2data2 <- p2data %>% select(-"probs", -"logit", -"outcome")
+logisticfit2 <- glm(death ~ ., data = p2data2, family = "binomial")
+summary(logisticfit2)
+logprobs2 <- predict(logisticfit2, type = "link")
+class_diag(logprobs2, p2data2$death)
+exp(coef(logisticfit2))
+```
+When testing for the effects of all the variables on probability of the death of the patient from heart disease, age, phosphokinase levels, ejection levels, and creatine serum levels have a significant effect. The odds of a patient dying from heart disease increase by 1.05 times with a one unit increase in age. The odds of a patient dying from heart disease increase by 1.00 times with a one unit increase in phosphokinase levels. The odds of a patient dying from heart disease increase by 0.93 times with a one unit increase in ejection levels. The odds of a patient dying from heart disease increase by 1.93 times with a one unit icnrease in creatine serum levels.
+
+The sensitivity of the model has increased from 0.239 in our previous model to 0.344. The specificity has increased slightly from 0.934 to 0.956. The precision also increased to 0.756. AUC increased to 0.809.
+
+## 10-Fold CV
+
+```{r}
+k = 10
+data1 <- p2data2[sample(nrow(p2data2)), ]
+folds <- cut(seq(1:nrow(p2data2)), breaks = k, labels = F)
+
+diags <- NULL
+for (i in 1:k) {
+    train <- data1[folds != i, ]
+    test <- data1[folds == i, ]
+    truth <- test$death
+    fit <- glm(death ~ ., data = train, family = "binomial")
+    probs <- predict(fit, newdata = test, type = "response")
+    
+    diags <- rbind(diags, class_diag(probs, truth))
+}
+summarize_all(diags, mean)
+```
+
+The sensitivity of our model goes up significantly whereas specificity decreases. This is to be expected since both values have a trade off. AUC does not increase greatly, nor does accuracy. Precision actually goes down.
+
+## LASSO
+```{r}
+y <- as.matrix(p2data2$death)
+x <- model.matrix(logisticfit2)
+head(x)
+cv <- cv.glmnet(x, y, family = "binomial")
+lasso <- glmnet(x, y, family = "binomial", lambda = cv$lambda.1se)
+coef(lasso)
+```
+
+When performing LASSO, only three predictor variables are retained - age, ejectin levels, and creatine serum levels.
+
+## 10-Fold CV
+```{r}
+k = 10
+data1 <- p2data2[sample(nrow(p2data2)), ]
+folds <- cut(seq(1:nrow(p2data2)), breaks = k, labels = F)
+
+diags <- NULL
+for (i in 1:k) {
+    train <- data1[folds != i, ]
+    test <- data1[folds == i, ]
+    truth <- test$death
+    fit2 <- glm(death ~ age + ejection + creatine, data = train, 
+        family = "binomial")
+    probs4 <- predict(fit2, newdata = test, type = "response")
+    
+    diags <- rbind(diags, class_diag(probs4, truth))
+}
+summarize_all(diags, mean)
+```
+
+After performing a regression only with the variables retained by LASSO, the AUC increases from 0.77 to 0.78, not really impactful.

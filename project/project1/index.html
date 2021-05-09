@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Manya Shah" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<script src="../../rmarkdown-libs/kePrint/kePrint.js"></script>
+<link href="../../rmarkdown-libs/lightable/lightable.css" rel="stylesheet" />
+
+
+<div id="about-the-datasets" class="section level2">
+<h2>About the Datasets</h2>
+<p>For this project, I combined two different datasets. Dataset 1 consists of 2 categorical variables - Country and Development Status and 3 numerical variables - Literacy, Employment, and GDP (in millions of dollars). This dataset was obtained from the World Bank. Dataset 2 consists of 1 categorical variable - Country, and 2 numerical variables - Net FDI Inflows (in millions of dollars) and population of the country (in millions).It was obtained from the International Labor Organization. Both datasets have 50 observations.I chose these datasets because I found a lack of research on foreign direct investments in the global market and the indicators that affect FDI.
+I expect there to be a positive and direct relationship between FDI and GDP as well as GDP and employment of the country.</p>
+</div>
+<div id="about-the-variables" class="section level2">
+<h2>About the Variables</h2>
+<p>GDP is the gross domestic product of each country and will be measured in millions of dollars.
+The development status is decided by various indicators chosen by the UN and World Bank and will act as a categorical variable with two distinct values - developed and developing
+Net FDI Inflow is the different between the money that is leaving the country and money that is entering the country. This variable will also be measured in millions of dollars.
+Employment is the percentage of employed people against the total population eligible to work.
+Education is the literacy rate of each country.
+The country name will be our joint variable between the datasets.</p>
+</div>
+<div id="joining-datasets" class="section level2">
+<h2>Joining Datasets</h2>
+<pre class="r"><code>library(tidyverse)
+D1 &lt;- read_csv(&quot;SDS328 Project 1 Data 1.csv&quot;)
+D2 &lt;- read_csv(&quot;SDS Project 1 Data 3.csv&quot;)
+Dataset &lt;- left_join(D1, D2)
+head(Dataset)</code></pre>
+<pre><code>## # A tibble: 6 x 7
+##   Country        GDP Education Employment Status     Population    FDI
+##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Argentina  449663.     0.84          55 Developing       45.2  6663.
+## 2 Australia 1392681.     0.92          62 Developed        25.5 40075.
+## 3 Brazil    1839758.     0.69          56 Developing      213.  73504.
+## 4 Canada    1736426.     0.89          61 Developed        37.7 47845.
+## 5 Chad        11315.     0.290         69 Developing       16.4   567.
+## 6 Chile      282318.     0.81          58 Developing       19.1 11928.</code></pre>
+<p>I used the left_join function because I did not have any preference on the order of my variables. Also, Dataset 1 had the majority of my variables and I wanted Dataset 2 to align according to it. No rows were removed nor were any NA values added.</p>
+</div>
+<div id="tidying-data" class="section level2">
+<h2>Tidying Data</h2>
+<p>Since my data was already tidy, I decided to rearrange it and then tidy it back.</p>
+<pre class="r"><code>dataset.long &lt;- Dataset %&gt;% pivot_longer(c(2:4), names_to = &quot;Variable&quot;, 
+    values_to = &quot;Values&quot;)
+dataset.long</code></pre>
+<pre><code>## # A tibble: 150 x 6
+##    Country   Status     Population    FDI Variable       Values
+##    &lt;chr&gt;     &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;
+##  1 Argentina Developing       45.2  6663. GDP         449663.  
+##  2 Argentina Developing       45.2  6663. Education        0.84
+##  3 Argentina Developing       45.2  6663. Employment      55   
+##  4 Australia Developed        25.5 40075. GDP        1392681.  
+##  5 Australia Developed        25.5 40075. Education        0.92
+##  6 Australia Developed        25.5 40075. Employment      62   
+##  7 Brazil    Developing      213.  73504. GDP        1839758.  
+##  8 Brazil    Developing      213.  73504. Education        0.69
+##  9 Brazil    Developing      213.  73504. Employment      56   
+## 10 Canada    Developed        37.7 47845. GDP        1736426.  
+## # … with 140 more rows</code></pre>
+<pre class="r"><code>dataset.long %&gt;% pivot_wider(names_from = &quot;Variable&quot;, values_from = &quot;Values&quot;)</code></pre>
+<pre><code>## # A tibble: 50 x 7
+##    Country   Status     Population     FDI       GDP Education Employment
+##    &lt;chr&gt;     &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Argentina Developing       45.2   6663.   449663.     0.84          55
+##  2 Australia Developed        25.5  40075.  1392681.     0.92          62
+##  3 Brazil    Developing      213.   73504.  1839758.     0.69          56
+##  4 Canada    Developed        37.7  47845.  1736426.     0.89          61
+##  5 Chad      Developing       16.4    567.    11315.     0.290         69
+##  6 Chile     Developing       19.1  11928.   282318.     0.81          58
+##  7 China     Developing     1439.  155815. 14342903.     0.65          65
+##  8 Colombia  Developing       50.9  14314.   323803.     0.68          62
+##  9 Qatar     Developing        2.9  -2813.   183466.     0.66          87
+## 10 Denmark   Developed         5.8  -7837.   348078.     0.92          59
+## # … with 40 more rows</code></pre>
+</div>
+<div id="exploring-the-data" class="section level2">
+<h2>Exploring the Data</h2>
+<pre class="r"><code>library(kableExtra)
+Dataset %&gt;% filter(GDP == max(GDP)) %&gt;% kbl(caption = &quot;Table 1: Statistics for Highest GDP&quot;) %&gt;% 
+    kable_classic(full_width = T, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1: </span>Table 1: Statistics for Highest GDP
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+U.S.A.
+</td>
+<td style="text-align:right;">
+21374419
+</td>
+<td style="text-align:right;">
+0.9
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:left;">
+Developed
+</td>
+<td style="text-align:right;">
+331
+</td>
+<td style="text-align:right;">
+351631
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset %&gt;% filter(GDP == min(GDP)) %&gt;% kbl(caption = &quot;Table 2: Statistics for Lowest GDP&quot;) %&gt;% 
+    kable_classic(full_width = T, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1: </span>Table 2: Statistics for Lowest GDP
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Haiti
+</td>
+<td style="text-align:right;">
+8498.98
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:left;">
+Developing
+</td>
+<td style="text-align:right;">
+11.4
+</td>
+<td style="text-align:right;">
+75
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset &lt;- Dataset %&gt;% mutate(GDP_per_capita = GDP/Population)
+Dataset %&gt;% filter(GDP_per_capita == max(GDP_per_capita)) %&gt;% 
+    kbl(caption = &quot;Table 3: Statistics for Highest GDP per Capita&quot;) %&gt;% 
+    kable_classic(full_width = T, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1: </span>Table 3: Statistics for Highest GDP per Capita
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+<th style="text-align:right;">
+GDP_per_capita
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Switzerland
+</td>
+<td style="text-align:right;">
+703082.4
+</td>
+<td style="text-align:right;">
+0.9
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:left;">
+Developed
+</td>
+<td style="text-align:right;">
+8.7
+</td>
+<td style="text-align:right;">
+-18382.53
+</td>
+<td style="text-align:right;">
+80814.07
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset %&gt;% filter(GDP_per_capita == min(GDP_per_capita)) %&gt;% 
+    kbl(caption = &quot;Table 4: Statistics for Lowest GDP per Capita&quot;) %&gt;% 
+    kable_classic(full_width = T, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1: </span>Table 4: Statistics for Lowest GDP per Capita
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+<th style="text-align:right;">
+GDP_per_capita
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Chad
+</td>
+<td style="text-align:right;">
+11314.95
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+<td style="text-align:right;">
+69
+</td>
+<td style="text-align:left;">
+Developing
+</td>
+<td style="text-align:right;">
+16.4
+</td>
+<td style="text-align:right;">
+566.64
+</td>
+<td style="text-align:right;">
+689.936
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset &lt;- Dataset %&gt;% arrange(desc(GDP_per_capita))
+Dataset %&gt;% filter(GDP &gt; mean(GDP)) %&gt;% select(Country, GDP, 
+    Employment) %&gt;% arrange(Employment) %&gt;% kbl(caption = &quot;Table 5: Employment for 10 Countries with Highest GDP&quot;) %&gt;% 
+    kable_classic(full_width = T, html_font = &quot;Cambria&quot;) %&gt;% 
+    row_spec(4, bold = T, color = &quot;black&quot;, background = &quot;green&quot;) %&gt;% 
+    row_spec(11, bold = T, color = &quot;black&quot;, background = &quot;grey&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1: </span>Table 5: Employment for 10 Countries with Highest GDP
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+India
+</td>
+<td style="text-align:right;">
+2875142
+</td>
+<td style="text-align:right;">
+47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+France
+</td>
+<td style="text-align:right;">
+2715518
+</td>
+<td style="text-align:right;">
+50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Brazil
+</td>
+<td style="text-align:right;">
+1839758
+</td>
+<td style="text-align:right;">
+56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: black !important;background-color: green !important;">
+U.S.A.
+</td>
+<td style="text-align:right;font-weight: bold;color: black !important;background-color: green !important;">
+21374419
+</td>
+<td style="text-align:right;font-weight: bold;color: black !important;background-color: green !important;">
+59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Germany
+</td>
+<td style="text-align:right;">
+3845630
+</td>
+<td style="text-align:right;">
+59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Russia
+</td>
+<td style="text-align:right;">
+1699877
+</td>
+<td style="text-align:right;">
+59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+United Kingdom
+</td>
+<td style="text-align:right;">
+2827113
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Japan
+</td>
+<td style="text-align:right;">
+5081770
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+South Korea
+</td>
+<td style="text-align:right;">
+1642383
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:right;">
+1736426
+</td>
+<td style="text-align:right;">
+61
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: black !important;background-color: grey !important;">
+China
+</td>
+<td style="text-align:right;font-weight: bold;color: black !important;background-color: grey !important;">
+14342903
+</td>
+<td style="text-align:right;font-weight: bold;color: black !important;background-color: grey !important;">
+65
+</td>
+</tr>
+</tbody>
+</table>
+<p>Summarizing the tables:</p>
+<p>Using the filter function, we can see that the United States and Haiti have the highest and lowest standards of living according to GDP. However, population can play a major role in this, meaning GDP is not always the accurate indicator of standard of living. For example, population of 10 people that earn 10,000 dollars will have the same GDP as a population of 10,000 people making 10 dollars.
+Therefore, we will create a new variable ‘GDP per capita’ by dividing the GDP by the population. Now we can see that it is actually Switzerland and Chad who have the highest and lowest standards of living respectively.
+In the last table, we analyse if employment is the only variable that controls GDP. If this was true, we would expect the country with the highest employment to have the highest GDP. However, this is not the case. We can see that while USA has the highest GDP, China has the highest employment. Hence, there must be other factors controlling the GDP variable. We will explore this more through a graphical representation later on.</p>
+<pre class="r"><code>library(kableExtra)
+s1 &lt;- Dataset %&gt;% summarize_if(is.numeric, mean) %&gt;% t()
+s2 &lt;- Dataset %&gt;% summarize_if(is.numeric, sd) %&gt;% t()
+s3 &lt;- Dataset %&gt;% summarize_if(is.numeric, min) %&gt;% t()
+s4 &lt;- Dataset %&gt;% summarize_if(is.numeric, max) %&gt;% t()
+s5 &lt;- Dataset %&gt;% summarize_if(is.numeric, IQR) %&gt;% t()
+s1 &lt;- s1 %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Variables&quot;) %&gt;% 
+    rename(mean = V1)
+s2 &lt;- s2 %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Var&quot;) %&gt;% 
+    rename(sd = V1)
+s3 &lt;- s3 %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Var&quot;) %&gt;% 
+    rename(min = V1)
+s4 &lt;- s4 %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Var&quot;) %&gt;% 
+    rename(max = V1)
+s5 &lt;- s5 %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;Var&quot;) %&gt;% 
+    rename(IQR = V1)
+Summary &lt;- cbind(s1, s2, s3, s4, s5)
+Summary &lt;- Summary %&gt;% as.data.frame %&gt;% select(-Var)
+Summary %&gt;% kbl(caption = &quot;Table 6: Summary Statistics of Numeric Variables&quot;) %&gt;% 
+    kable_classic(full_width = F, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-4">Table 2: </span>Table 6: Summary Statistics of Numeric Variables
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Variables
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+max
+</th>
+<th style="text-align:right;">
+IQR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+GDP
+</td>
+<td style="text-align:right;">
+1511487.5692
+</td>
+<td style="text-align:right;">
+3.602599e+06
+</td>
+<td style="text-align:right;">
+8498.980
+</td>
+<td style="text-align:right;">
+21374418.88
+</td>
+<td style="text-align:right;">
+1144980.540
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:right;">
+0.7302
+</td>
+<td style="text-align:right;">
+1.671427e-01
+</td>
+<td style="text-align:right;">
+0.290
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+0.215
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Employment
+</td>
+<td style="text-align:right;">
+59.8400
+</td>
+<td style="text-align:right;">
+1.051017e+01
+</td>
+<td style="text-align:right;">
+40.000
+</td>
+<td style="text-align:right;">
+87.00
+</td>
+<td style="text-align:right;">
+10.500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Population
+</td>
+<td style="text-align:right;">
+116.8372
+</td>
+<td style="text-align:right;">
+2.766796e+02
+</td>
+<td style="text-align:right;">
+0.300
+</td>
+<td style="text-align:right;">
+1439.30
+</td>
+<td style="text-align:right;">
+83.535
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FDI
+</td>
+<td style="text-align:right;">
+26466.2734
+</td>
+<td style="text-align:right;">
+5.574868e+04
+</td>
+<td style="text-align:right;">
+-18382.530
+</td>
+<td style="text-align:right;">
+351631.00
+</td>
+<td style="text-align:right;">
+25811.627
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GDP_per_capita
+</td>
+<td style="text-align:right;">
+24142.2277
+</td>
+<td style="text-align:right;">
+2.323628e+04
+</td>
+<td style="text-align:right;">
+689.936
+</td>
+<td style="text-align:right;">
+80814.07
+</td>
+<td style="text-align:right;">
+37763.161
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset %&gt;% group_by(Status) %&gt;% summarize_if(is.numeric, mean) %&gt;% 
+    rename(`Mean By Status` = &quot;Status&quot;) %&gt;% kbl(caption = &quot;Table 7: Mean of Numeric Variables by Development Status&quot;) %&gt;% 
+    kable_classic(full_width = F, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-4">Table 2: </span>Table 7: Mean of Numeric Variables by Development Status
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Mean By Status
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+<th style="text-align:right;">
+GDP_per_capita
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Developed
+</td>
+<td style="text-align:right;">
+3029890.6
+</td>
+<td style="text-align:right;">
+0.885
+</td>
+<td style="text-align:right;">
+59.92857
+</td>
+<td style="text-align:right;">
+58.87857
+</td>
+<td style="text-align:right;">
+45853.57
+</td>
+<td style="text-align:right;">
+50343.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Developing
+</td>
+<td style="text-align:right;">
+920997.5
+</td>
+<td style="text-align:right;">
+0.670
+</td>
+<td style="text-align:right;">
+59.80556
+</td>
+<td style="text-align:right;">
+139.37667
+</td>
+<td style="text-align:right;">
+18926.77
+</td>
+<td style="text-align:right;">
+13953.04
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset %&gt;% group_by(Status) %&gt;% summarize_if(is.numeric, min) %&gt;% 
+    rename(`Minimum Value by Status` = &quot;Status&quot;) %&gt;% kbl(caption = &quot;Table 8: Minimum Values of Numeric Variables by Development Status&quot;) %&gt;% 
+    kable_classic(full_width = F, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-4">Table 2: </span>Table 8: Minimum Values of Numeric Variables by Development Status
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Minimum Value by Status
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+<th style="text-align:right;">
+GDP_per_capita
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Developed
+</td>
+<td style="text-align:right;">
+24188.04
+</td>
+<td style="text-align:right;">
+0.76
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+<td style="text-align:right;">
+-18382.53
+</td>
+<td style="text-align:right;">
+23302.557
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Developing
+</td>
+<td style="text-align:right;">
+8498.98
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+2.1
+</td>
+<td style="text-align:right;">
+-2812.64
+</td>
+<td style="text-align:right;">
+689.936
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Dataset %&gt;% group_by(Status) %&gt;% summarize_if(is.numeric, max) %&gt;% 
+    rename(`Maximum Value by Status` = &quot;Status&quot;) %&gt;% kbl(caption = &quot;Table 9: Maximum Value of Numeric Variables by Development&quot;) %&gt;% 
+    kable_classic(full_width = F, html_font = &quot;Cambria&quot;)</code></pre>
+<table class=" lightable-classic" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-4">Table 2: </span>Table 9: Maximum Value of Numeric Variables by Development
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Maximum Value by Status
+</th>
+<th style="text-align:right;">
+GDP
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:right;">
+Population
+</th>
+<th style="text-align:right;">
+FDI
+</th>
+<th style="text-align:right;">
+GDP_per_capita
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Developed
+</td>
+<td style="text-align:right;">
+21374419
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+72
+</td>
+<td style="text-align:right;">
+331.0
+</td>
+<td style="text-align:right;">
+351631.0
+</td>
+<td style="text-align:right;">
+80814.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Developing
+</td>
+<td style="text-align:right;">
+14342903
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+87
+</td>
+<td style="text-align:right;">
+1439.3
+</td>
+<td style="text-align:right;">
+155815.3
+</td>
+<td style="text-align:right;">
+63264.21
+</td>
+</tr>
+</tbody>
+</table>
+<p>Summarizing the tables:</p>
+<p>Table 6 summarizes the statistics of all numeric variables regardless of their categorical classification. We can see the spread, max and min values, and quantile ranges throughout the dataset. To analyze the effect of the development status of the country on these summary statistics, we grouped them accordingly in Table 7,8, and 9.
+By comparing the minimum values of the developed group and the maximum values of the developing group, we can try to see if there is some set limit that seperates the two groups.
+The max GDP per capita of the highest developing country is 2.71 times higher than the min GDP per capita in the developed group. Similarly, max employment in the developing group is 87, while the min employment is only 50 in the developed group. Therefore, we can conclude that a single variable does not control the status of a country, instead it is more likely a mix of all.</p>
+</div>
+<div id="visualizations" class="section level2">
+<h2>Visualizations</h2>
+<p>Using the correlation matrix, we can determine how each numeric variable relates to one other. These correlations have been displayed in both a tabular and graphic form below.</p>
+<pre><code>##                        GDP   Education  Employment Population         FDI
+## GDP             1.00000000  0.17820588 -0.02249183  0.5333389  0.92416133
+## Education       0.17820588  1.00000000 -0.05202709 -0.1895795  0.21091449
+## Employment     -0.02249183 -0.05202709  1.00000000 -0.1197990 -0.01535499
+## Population      0.53333893 -0.18957948 -0.11979905  1.0000000  0.41796647
+## FDI             0.92416133  0.21091449 -0.01535499  0.4179665  1.00000000
+## GDP_per_capita  0.21601900  0.71662608  0.25137299 -0.2077991  0.25235633
+##                GDP_per_capita
+## GDP                 0.2160190
+## Education           0.7166261
+## Employment          0.2513730
+## Population         -0.2077991
+## FDI                 0.2523563
+## GDP_per_capita      1.0000000</code></pre>
+<pre><code>## # A tibble: 36 x 3
+##    var1      var2           correlation
+##    &lt;chr&gt;     &lt;chr&gt;                &lt;dbl&gt;
+##  1 GDP       GDP                 1     
+##  2 GDP       Education           0.178 
+##  3 GDP       Employment         -0.0225
+##  4 GDP       Population          0.533 
+##  5 GDP       FDI                 0.924 
+##  6 GDP       GDP_per_capita      0.216 
+##  7 Education GDP                 0.178 
+##  8 Education Education           1     
+##  9 Education Employment         -0.0520
+## 10 Education Population         -0.190 
+## # … with 26 more rows</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-5-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Plot 1: According to the heatmap above, we see the highest correlation between GDP and FDI at 0.92 as well as GDP per capita and Education at 0.72. Another important correlation to note is that between population and GDP, and population and GDP per capita. As we noted in our summary statistics as well, a high GDP does not necessarily mean a high GDP per capita and the popoulation acts as the deciding factor. Hence, it is not surprisngly that while population and GDP have a positive correlation, population and GDP per capita have a negative correlation.</p>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-6-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Plot 2: In the above plot, we have total GDP of the country on the x-axis and the net FDI on the y-axis. The histograms in dark blue display the distribution of each variable. I wanted to test if the gross domestic product of a country and if that has an effect on how foreign investors value it. I also wanted to see if the development status can increase or decrease its appeal for foreign investments. As predicted in the introduction, there is a direct and positive relationship between FDI and GDP. The data was transformed to log form to accommodate for the large numbers.Surprisingly, development status did not have a significant effect on how investors viewed the potential of each country. There is an even increase in FDI with increase in GDP for all countries, regardless of development status. The country with the highest GDP and FDI has been labelled.
+In order to further ensure the data was normally distributed, a histogram has been imposed on the scatterplot. Both variables seem to be mostly evenly distributed.</p>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Plot 3: In the above plot, we have the sample countries on the y-axis and the rate of employment on the x-axis. The bars have been distinguished based on whether the county is developed or developing. I wanted to test if an increase in employment opportunities can further the development status. Based on the hypothesis that it does, all countries towards the end of the graph with the highest employment rates, should have been filled in with dark green to indicate fully developed status. Surprisingly, this was not the case. Developed countries were spread pretty evenly throughout the graph and developed countries took up both sides of the extremes. This observation should prompt further research into how the types of employment offered in each country and other factors affect it. As we studied in the summary statistics above, neither the United States (highest GDP) nor Switzerland(highest GDP per capita) have the highest employment rates.</p>
+</div>
+<div id="k-means-clustering" class="section level2">
+<h2>K-Means Clustering</h2>
+<pre class="r"><code>library(cluster)
+library(GGally)
+kmeans5 &lt;- Dataset %&gt;% select_if(is.numeric)
+sil_width &lt;- vector()
+for (i in 2:10) {
+    kms &lt;- kmeans(kmeans5, centers = i)
+    sil &lt;- silhouette(kms$cluster, dist(kmeans5))
+    sil_width[i] &lt;- mean(sil[, 3])
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_y_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- kmeans5 %&gt;% pam(2)
+pam1</code></pre>
+<pre><code>## Medoids:
+##      ID        GDP Education Employment Population       FDI GDP_per_capita
+## [1,] 28   364701.5      0.71         62       32.4   7650.47      11256.220
+## [2,] 29 14342902.8      0.65         65     1439.3 155815.34       9965.193
+## Clustering vector:
+##  [1] 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1
+## [39] 1 1 1 1 1 1 1 1 1 1 1 1
+## Objective function:
+##    build     swap 
+## 763573.6 763165.5 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>pam1$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.9226429</code></pre>
+<pre class="r"><code>plot(pam1, which = 2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-2.png" width="1152" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kmeans5 %&gt;% mutate(cluster = as.factor(pam1$clustering)) %&gt;% 
+    ggpairs(columns = c(&quot;GDP&quot;, &quot;FDI&quot;, &quot;Employment&quot;, &quot;Education&quot;, 
+        &quot;GDP_per_capita&quot;), upper = NULL, aes(color = cluster))</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-3.png" width="1152" style="display: block; margin: auto;" />
+Based on our plot for kmeans from 1 to 10, we can see that the average silhouette width is highest at 2 clusters. Using this number for PAM, we get an average width of 0.92 implying a strong structure. The silhouette plot further confirms this.</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
